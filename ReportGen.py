@@ -3,7 +3,7 @@
 ##############################################################################
 from lxml import etree
 
-filename = 'MarsRoverUseCase.xml'
+filename = 'RoverOverviewFinal.xml'
 
 #==============================================================================
 class ReportGenerator():
@@ -11,6 +11,7 @@ class ReportGenerator():
     def __init__(self):
         self.tree = etree.parse(filename)
         self.root= self.tree.getroot()
+        self.packages = {}
         self.diagrams = []
         self.activityDiagrams = {}
         self.classDiagrams = {}
@@ -40,6 +41,16 @@ class ReportGenerator():
         value = tagHandle.get(attributeName)
 
         return value
+
+#----------------------------------------------------------------------
+    def getPackages(self):
+        "Stores all of packages to self.packages"
+
+        allPackages = self.findAllTags("UML:Package")
+        for package in allPackages:
+            packageName = self.getAttribute(package, "name")
+            if packageName != None:
+                self.packages.update({packageName: package})
 
 #----------------------------------------------------------------------
     def getDiagrams(self):
@@ -122,13 +133,15 @@ class Diagram():
 ##############################################################################
 if __name__ == "__main__":
     reportGenerator = ReportGenerator()
-    reportGenerator.getDiagrams()
+    reportGenerator.getPackages()
+    # reportGenerator.getDiagrams()
     # reportGenerator.getUseCases()
     # reportGenerator.getClassifiers()
 
-    for k, v in reportGenerator.activityDiagrams.items():
-        actions = reportGenerator.getActions(v)
-        print("\n")
-        print("Actions for diagram " + str(k))
-        print (actions)
-        print("\n")
+
+    # for k, v in reportGenerator.activityDiagrams.items():
+    #     actions = reportGenerator.getActions(v)
+    #     print("\n")
+    #     print("Actions for diagram " + str(k))
+    #     print (actions)
+    #     print("\n")
