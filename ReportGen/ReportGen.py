@@ -14,7 +14,7 @@ class ReportGenerator():
         self.diagrams = []
         self.activityDiagrams = []
         self.useCases = []
-        self.classifiers = []
+        self.classifiers = {}
 
 #----------------------------------------------------------------------
     def findAllTags(self, tagName):
@@ -68,18 +68,32 @@ class ReportGenerator():
     def getClassifiers(self):
         "Stores all of classifiers in self.classifiers"
 
-        allClassifiers = self.findAllTags("")
+            # Search for all UML:Actor
+        allActorClassifiers = self.findAllTags("UML:Actor")
+        for actorClassifier in allActorClassifiers:
+            actorClassifierName = self.getAttribute(actorClassifier, "name")
+            #Are the names empty?
+            if actorClassifierName != None:
+                self.classifiers.update({actorClassifierName: "actor"})
+
+            # Search for all JUDE:ClassifierPresentation
+        allClassClassifiers = self.findAllTags("JUDE:ClassifierPresentation")
+        for classClassifier in allClassClassifiers:
+            classClassifierName = self.getAttribute(classClassifier, "label")
+            #Are the names empty?
+            if classClassifierName != None:
+                self.classifiers.update({classClassifierName: "class"})
+
 # #----------------------------------------------------------------------
-#     def getClassifiers(self):
-#         "Stores all of classifiers in self.classifiers"
-#
-#         allClassifiers = self.findAllTags("")
+#     def getChildren(self, diagramHandle):
+#         ""
 
 ##############################################################################
 if __name__ == "__main__":
     reportGenerator = ReportGenerator()
-    reportGenerator.getDiagrams()
-    reportGenerator.getUseCases()
+    # reportGenerator.getDiagrams()
+    # reportGenerator.getUseCases()
+    reportGenerator.getClassifiers()
 
-    for x in reportGenerator.useCases:
-        print (x)
+    for k, v in reportGenerator.classifiers.items():
+        print (k, v)
