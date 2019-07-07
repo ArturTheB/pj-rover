@@ -12,7 +12,9 @@ class ReportGenerator():
         self.tree = etree.parse(filename)
         self.root= self.tree.getroot()
         self.diagrams = []
-        self.activityDiagrams = []
+        self.activityDiagrams = {}
+        self.classDiagrams = {}
+        self.useCaseDiagrams = {}
         self.useCases = []
         self.classifiers = {}
 
@@ -43,6 +45,10 @@ class ReportGenerator():
             # Are the names empty?
             if judeName != None:
                 self.diagrams.append(judeName)
+                if self.getAttribute(jude, "typeInfo") == "UseCase Diagram":
+                    self.useCaseDiagrams.update({judeName : jude}) # judeName: Name of diagram, jude: diagram handle
+                elif self.getAttribute(jude, "typeInfo") == "Class Diagram":
+                    self.classDiagrams.update({judeName : jude})
 
         #Search for JUDE:ActivityDiagram
         allJudeActivity = self.findAllTags("JUDE:ActivityDiagram")
@@ -50,7 +56,7 @@ class ReportGenerator():
             judeName = self.getAttribute(jude, "name")
             if judeName != None:
                 self.diagrams.append(judeName)
-                self.activityDiagrams.append(judeName)
+                self.activityDiagrams.update({judeName : jude})
 
 #----------------------------------------------------------------------
     def getUseCases(self):
@@ -88,12 +94,19 @@ class ReportGenerator():
 #     def getChildren(self, diagramHandle):
 #         ""
 
+#==============================================================================
+class Diagram():
+#----------------------------------------------------------------------
+    def __init__(self, name, type, handle):
+        self.name = name # String
+        self.type = nameString # String
+        self.handle = handle
+
 ##############################################################################
 if __name__ == "__main__":
     reportGenerator = ReportGenerator()
-    # reportGenerator.getDiagrams()
+    reportGenerator.getDiagrams()
     # reportGenerator.getUseCases()
-    reportGenerator.getClassifiers()
+    # reportGenerator.getClassifiers()
 
-    for k, v in reportGenerator.classifiers.items():
-        print (k, v)
+    reportGenerator.activityDiagrams
