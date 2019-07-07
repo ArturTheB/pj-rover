@@ -1,21 +1,85 @@
 # -*- coding: iso-8859-1 -*-
 '''This file creates an '''
 ##############################################################################
+from lxml import etree
 
-import xml.etree.ElementTree as ET
+filename = 'MarsRoverUseCase.xml'
 
+#==============================================================================
+class ReportGenerator():
+#----------------------------------------------------------------------
+    def __init__(self):
+        self.tree = etree.parse(filename)
+        self.root= self.tree.getroot()
+        self.diagrams = []
+        self.activityDiagrams = []
+        self.useCases = []
+        self.classifiers = []
 
 #----------------------------------------------------------------------
+    def findAllTags(self, tagName):
+        "This function searches for all tags with name in <tagName>"
+
+        allTags = self.root.findall(".//" + str(tagName), self.root.nsmap)
+
+        return allTags
+
+#----------------------------------------------------------------------
+    def getAttribute(self, tagHandle, attributeName):
+        "Gets an attribute <attributeName> from tag"
+
+        value = tagHandle.get(attributeName)
+
+        return value
+
+#----------------------------------------------------------------------
+    def getDiagrams(self):
+        "Stores all diagrams from XML to self.diagrams"
+
+        # Search for Jude diagrams
+        allJudes = self.findAllTags("JUDE:Diagram")
+        for jude in allJudes:
+            judeName = self.getAttribute(jude, "name")
+            # Are the names empty?
+            if judeName != None:
+                self.diagrams.append(judeName)
+
+        #Search for JUDE:ActivityDiagram
+        allJudeActivity = self.findAllTags("JUDE:ActivityDiagram")
+        for jude in allJudeActivity:
+            judeName = self.getAttribute(jude, "name")
+            if judeName != None:
+                self.diagrams.append(judeName)
+                self.activityDiagrams.append(judeName)
+
+#----------------------------------------------------------------------
+    def getUseCases(self):
+        "Stores all of use cases in self.UseCases"
+
+            # Search for all UML:UseCase
+        allUseCase = self.findAllTags("UML:UseCase")
+        for useCase in allUseCase:
+            useCaseName = self.getAttribute(useCase, "name")
+            # Are the names empty?
+            if useCaseName != None:
+                self.useCases.append(useCaseName)
+
+#----------------------------------------------------------------------
+    def getClassifiers(self):
+        "Stores all of classifiers in self.classifiers"
+
+        allClassifiers = self.findAllTags("")
+# #----------------------------------------------------------------------
+#     def getClassifiers(self):
+#         "Stores all of classifiers in self.classifiers"
+#
+#         allClassifiers = self.findAllTags("")
+
+##############################################################################
 if __name__ == "__main__":
-    fileString = 'MarsRoverUseCase.xml'
-    tree = ET.parse(fileString)
-    root = tree.getroot()
+    reportGenerator = ReportGenerator()
+    reportGenerator.getDiagrams()
+    reportGenerator.getUseCases()
 
-    ''' for elem in root:
-        print("Child of root element " + str(elem))
-        for subelem in elem:
-            print("Subelements: " + str(subelem))
-        print("\n") '''
-
-    # Find all "JUDE:Diagram" in XML
-    allJude = tree.findall("//UML:Model")
+    for x in reportGenerator.useCases:
+        print (x)
