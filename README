@@ -2,6 +2,6 @@ Content:
 folder "ReportGen" contains the whole software.
 
 files:
-"xmlExtract.py" - file for extracting information from XML file
-"pdfGen.py"     - file for generating report, with program flow
-
+"xmlExtract.py" - for extracting information from XML file
+"pdfGen.py"     - for generating report, with program flow
+"reportGenerator.py" - START file
